@@ -1,0 +1,27 @@
+--[[
+%% properties
+15 value
+%% globals
+%% autostart
+--]]
+
+local deviceThermometerId = 25
+local deviceTurncockId = 15
+
+local maxTemperature = tonumber(fibaro:getGlobalValue("WojMaxTemp"))
+local sourceTrigger = fibaro:getSourceTrigger()
+
+if (sourceTrigger["type"] == "autostart") then
+    while true do
+        local getTemperatureFromDevice = tonumber(fibaro:getValue(deviceThermometerId, "value"))
+        if (getTemperatureFromDevice < maxTemperature) then
+            fibaro:call(deviceTurncockId, "turnOn")
+            fibaro:debug("Device on "..getTemperatureFromDevice)
+        else
+            fibaro:call(deviceTurncockId, "turnOff")
+            fibaro:debug("Device off "..getTemperatureFromDevice)
+        end
+        fibaro:sleep(30*60*1000);
+    end
+end
+
